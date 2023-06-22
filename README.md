@@ -13,6 +13,7 @@ Projetos que logz usa
 ## Como rodar esse projeto?
 
 ```bash
+sudo chwon root. filebeat.yml
 docker-compose up
 ```
 
