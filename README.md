@@ -1,8 +1,8 @@
-# OpenSearch
+# logz local
 
-Exemplo de como usar o "logz" local.
+Example of how to use local "logz".
 
-Projetos que logz usa
+Opensource projects used by logz:
 
 - https://opentelemetry.io/
 - https://www.jaegertracing.io/
@@ -10,18 +10,22 @@ Projetos que logz usa
 - https://prometheus.io/
 - https://m3db.io/
 
-## Como rodar esse projeto?
+
+
+## How to run this project?
 
 ```bash
 sudo chwon root. filebeat.yml
 docker-compose up
 ```
 
-Acesse http://localhost:5601
+Open http://localhost:5601
 user: admin
 pass: admin
 
+Open http://localhost:5601/app/management/opensearch-dashboards/indexPatterns/create
+Create index with name `my-data-stream`
 
-Crie um indice `my-data-stream`
+## logs
 
-http://localhost:5601/app/management/opensearch-dashboards/indexPatterns/create
+Send logs in json format inside the logs folder which will automatically be sent to opensearch
