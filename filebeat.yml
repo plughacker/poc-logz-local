@@ -6,6 +6,8 @@ filebeat.inputs:
   json.add_error_key: true
   json.expand_keys: true
 
+#https://app.logz.io/#/dashboard/osd/dashboards/view/3fe1b7b0-2dc1-11ef-823b-c5b661a8f81a?_a=(description:'',filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'logzioCustomerIndex*',key:kubernetes.namespace,negate:!f,params:(query:transactions),type:phrase),query:(match_phrase:(kubernetes.namespace:transactions))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'logzioCustomerIndex*',key:ecr.container.image.version,negate:!f,params:(query:v3.83.0),type:phrase),query:(match_phrase:(ecr.container.image.version:v3.83.0))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'logzioCustomerIndex*',key:TraceId,negate:!f,params:(query:Z3sL-iB6IAMEcKw%3D),type:phrase),query:(match_phrase:(TraceId:Z3sL-iB6IAMEcKw%3D)))),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),query:(language:kuery,query:''),timeRestore:!t,title:'Dash%20Opentelemetry',viewMode:view)&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-2h,to:now))&switchToAccountId=1156224
+
 processors:
 - script:
     lang: javascript
@@ -14,16 +16,17 @@ processors:
       var regexCPF = /\b(?:\d[ -\.]*?){11}\b/g;
       var regexEmail = /\b[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\b/g;
       var regexCVV = /(cvv|cvc|csc|cid|cvn|cve|cvp2)"(?:\s?):(?:\s?)"(?:\b\d{3,4}\b)/gi;
-
+      var regexCredentials = /credentials\\":{\\"type\\":.*?}/g;
       function process(event) {
           var msg = event.Get("message");
           msg = msg.replace(regexCreditCard, "<mask_card>");
           msg = msg.replace(regexCPF, "<mask_cpf>");
           msg = msg.replace(regexEmail, "<mask_email>");
           msg = msg.replace(regexCVV, '$1":"<mask_cvv>');
+          msg = msg.replace(regexCredentials, 'credentials\\\":\\\"<mask_credentials>\\\"');
           event.Put("message", msg);
-        }
-
+      }
+        
 - decode_json_fields:
     fields: ["message"]
     target: "json"
