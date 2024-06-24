@@ -15,7 +15,7 @@ Opensource projects used by logz:
 ## How to run this project?
 
 ```bash
-sudo chwon root. filebeat.yml
+sudo chown root. filebeat.yml
 docker-compose up
 ```
 

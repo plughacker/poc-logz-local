@@ -7,6 +7,23 @@ filebeat.inputs:
   json.expand_keys: true
 
 processors:
+- script:
+    lang: javascript
+    source: >
+      var regexCreditCard = /\b(?:\d[ -]*?){13,16}\b/g;
+      var regexCPF = /\b(?:\d[ -\.]*?){11}\b/g;
+      var regexEmail = /\b[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\b/g;
+      var regexCVV = /(cvv|cvc|csc|cid|cvn|cve|cvp2)"(?:\s?):(?:\s?)"(?:\b\d{3,4}\b)/gi;
+
+      function process(event) {
+          var msg = event.Get("message");
+          msg = msg.replace(regexCreditCard, "<mask_card>");
+          msg = msg.replace(regexCPF, "<mask_cpf>");
+          msg = msg.replace(regexEmail, "<mask_email>");
+          msg = msg.replace(regexCVV, '$1":"<mask_cvv>');
+          event.Put("message", msg);
+        }
+
 - decode_json_fields:
     fields: ["message"]
     target: "json"
